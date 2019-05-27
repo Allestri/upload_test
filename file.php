@@ -24,11 +24,11 @@
                 
                 	<div class="form-group">
                         <label for="titre">Titre du fichier (max. 50 caractères) :</label><br />
-                        <input type="text" name="titre" value="Titre du fichier" id="titre" /><br />
+                        <input type="text" name="titre" placeholder="Titre du fichier" id="titre" required /><br />
                     </div>
                     <div class="form-group">
-                        <label for="mon_fichier">Fichier (tous formats | max. 1 Mo) :</label><br />
-                        <input type="hidden" name="MAX_FILE_SIZE" value="1048576" />
+                        <label for="myfile">Fichier (tous formats | max. 10 Mo) :</label><br />
+                        <input type="hidden" name="MAX_FILE_SIZE" value="10048576" />
                         <input type="file" name="myfile" id="myfile" /><br />
                     </div>
 
@@ -36,23 +36,92 @@
             	</form> 
 			</div>
         </div>
-            <div class="row">
+            <div class="row justify-content-center">
                 <div class="col-lg-12">
-                	<?php 
+                	<?php
+                	$bdd = new PDO('mysql:host=localhost;dbname=upload_photos;charset=utf8','root', '', array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+                	//var_dump($bdd);
+                	
                         if(isset($_FILES['myfile'])){
-                            pre_r($_FILES);
-                            $tmp_name = $_FILES['myfile']['tmp_name'];
-                            $dir_folder = $_SERVER['DOCUMENT_ROOT'];
-                            // var_dump($dir_folder);
-                            move_uploaded_file($tmp_name, $dir_folder . 'DIR'.
-                                $_FILES['myfile']['name']);
+                            
+                            //pre_r($_FILES);
+                            
+                            
+                            
+                            $phpFileUploadErrors = array(
+                            0 => 'There is no error, the file uploaded with success',
+                            1 => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
+                            2 => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form',
+                            3 => 'The uploaded file was only partially uploaded',
+                            4 => 'No file was uploaded',
+                            6 => 'Missing a temporary folder',
+                            7 => 'Failed to write file to disk.',
+                            8 => 'A PHP extension stopped the file upload.',
+                            );
+                            
+                            
+                            
+                            // Contrôle une liste extension valides.
+                            $ext_error = false;
+                            $extensions = array('jpg', 'JPG', 'jpeg', 'gif', 'png');
+                            $file_ext = explode('.', $_FILES['myfile']['name']);
+                            $file_ext = end($file_ext);
+                            //pre_r($file_ext);
+                            if(!in_array($file_ext, $extensions)){
+                                $ext_error = true;
+                            }
+                            // Si l'erreur n'est pas egale à 0
+                            if($_FILES['myfile']['error']){
+                                echo $phpFileUploadErrors[$_FILES['myfile']['error']];
+                            } elseif ($ext_error){
+                                echo "Type de fichier invalide !";
+                            } else { 
+                                ?>
+                                <div class="alert alert-success"><?php
+                                $tmp_name = $_FILES['myfile']['tmp_name'];
+                                $dir_folder = $_SERVER['DOCUMENT_ROOT'];
+                                
+                                // Rename the file
+                                $name = "{$_POST['titre']}.{$file_ext}";
+                                
+                                // Unique file ID
+                                $fid = date('d');
+                               
+                                
+
+                                
+                                // Check if a file already exists
+                                if(file_exists('images/'. $name)){
+                                    echo "Le fichier existe</br>";
+                                    $name = "{$_POST['titre']}_{$fid}.{$file_ext}";
+                                    move_uploaded_file($tmp_name, 'images/'. $name);
+                                    echo $fid;
+                                    //EXIF
+                                    $exif = exif_read_data('images/' . $name);
+                                    var_dump($exif);
+                                } else {
+                                    echo "Le fichier n'existe pas</br>";
+                                    //var_dump($dir_folder);
+                                    move_uploaded_file($tmp_name, 'images/'. $name);
+                                    $sql = "INSERT INTO photos (name, exif, upload_date) VALUES(?, 4, NOW())";
+                                    $sql = $bdd->prepare($sql);
+                                    $sql->execute(array($_POST['titre']));
+                                    echo "Fichier uploadé avec succès !";
+                                }                           
+                                
+                                ?>
+                                </div>
+                                <?php
+                            }
+                            
+                            
+
                         }
                         function pre_r($array){
                             echo '<pre>';
                             print_r($array);
                             echo '</pre>';
                         }
-                        // $extensions_valides = array('jpg', 'jpeg', 'gif', 'png');
                         // $maxsize = $_POST['MAX_FILE_SIZE'];
                         // $erreur = "";
                                 
