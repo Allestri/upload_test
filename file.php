@@ -39,8 +39,6 @@
             <div class="row justify-content-center">
                 <div class="col-lg-12">
                 	<?php
-                	$bdd = new PDO('mysql:host=localhost;dbname=upload_photos;charset=utf8','root', '', array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
-                	//var_dump($bdd);
                 	
                         if(isset($_FILES['myfile'])){
                             
@@ -58,7 +56,6 @@
                             7 => 'Failed to write file to disk.',
                             8 => 'A PHP extension stopped the file upload.',
                             );
-                            
                             
                             
                             // Contrôle une liste extension valides.
@@ -81,31 +78,40 @@
                                 $tmp_name = $_FILES['myfile']['tmp_name'];
                                 $dir_folder = $_SERVER['DOCUMENT_ROOT'];
                                 
-                                // Rename the file
-                                $name = "{$_POST['titre']}.{$file_ext}";
+
                                 
                                 // Unique file ID
                                 $fid = date('d');
+                            
+                            
+                            function insertDatas(){
+                                $bdd = new PDO('mysql:host=localhost;dbname=upload_photos;charset=utf8','root', '', array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+                                //var_dump($bdd);
+                                $sql = "INSERT INTO photos (name, exif, upload_date) VALUES(?, 4, NOW())";
+                                $sql = $bdd->prepare($sql);
+                                $sql->execute(array($_POST['titre']));
+                            }
                                
-                                
-
+                            // Rename the file
+                            function renameFile($file_ext) {
+                                $name = "{$_POST['titre']}.{$file_ext}";
+                            }
                                 
                                 // Check if a file already exists
                                 if(file_exists('images/'. $name)){
                                     echo "Le fichier existe</br>";
+                                    renameFile($fid);
                                     $name = "{$_POST['titre']}_{$fid}.{$file_ext}";
                                     move_uploaded_file($tmp_name, 'images/'. $name);
-                                    echo $fid;
-                                    //EXIF
+                                   
                                     $exif = exif_read_data('images/' . $name);
-                                    var_dump($exif);
+                                    //var_dump($exif);
+                                    insertDatas();
                                 } else {
                                     echo "Le fichier n'existe pas</br>";
                                     //var_dump($dir_folder);
                                     move_uploaded_file($tmp_name, 'images/'. $name);
-                                    $sql = "INSERT INTO photos (name, exif, upload_date) VALUES(?, 4, NOW())";
-                                    $sql = $bdd->prepare($sql);
-                                    $sql->execute(array($_POST['titre']));
+                                    insertDatas();
                                     echo "Fichier uploadé avec succès !";
                                 }                           
                                 
