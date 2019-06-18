@@ -125,7 +125,7 @@
              	
                      if(isset($_FILES['myfile'])){
                             
-                            //pre_r($_FILES);
+                            pre_r($_FILES);
                             
                             
                             

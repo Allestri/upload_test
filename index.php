@@ -21,6 +21,9 @@
             <div class="row justify-content-center">
                 <div class="col-lg-6">
                     Bonjour et bienvenue !
+                    <?php 
+                        include "datas.php";
+                    ?>
                 </div>                
             </div>
             <div class="row justify-content-center">
