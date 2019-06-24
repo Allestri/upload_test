@@ -121,7 +121,7 @@
                 	  }
                 	  
                 	  // Placeholder adress insert SQL
-                	  $foo ="Alexandre";
+                	  $foo ="John Doe";
              	
                      if(isset($_FILES['myfile'])){
                             

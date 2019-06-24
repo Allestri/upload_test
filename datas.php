@@ -3,7 +3,6 @@
 try
 {
     $db = new PDO('mysql:host=localhost;dbname=upload_photos;charset=utf8', 'root', '');
-    //var_dump($db);
 }
 
 catch(Exception $e)
@@ -14,30 +13,21 @@ catch(Exception $e)
 $sql = "SELECT * FROM markers WHERE 1";
 $result = $db->query($sql);
 
-// XML File
-$dom = new DOMDocument("1.0");
-//$dom->formatOutput = true;
-$node = $dom->createElement("markers");
-$parnode = $dom->appendChild($node);
+$datas = array();
 
-//var_dump($dom);
-
-
-//var_dump($result);
-
-//header("Content-type: text/xml");
-
-while($row = $result->fetch()){
-    // Add to XML document node
-    $node = $dom->createElement("marker");
-    $newnode = $parnode->appendChild($node);
-    $newnode->setAttribute("id",$row['id']);
-    $newnode->setAttribute("name",$row['name']);
-    $newnode->setAttribute("address", $row['address']);
-    $newnode->setAttribute("lat", $row['lat']);
-    $newnode->setAttribute("lng", $row['lng']);
-    $newnode->setAttribute("type", $row['type']);
+while($row = $result->fetch())
+{
+    $datas[] = array(
+        'id' => $row['id'],
+        'name' =>$row['name'],
+        'address' => $row['address'],
+        'lat' =>$row['lat'],
+        'lng' =>$row['lng'],
+        'type' => $row['type']
+    );
 }
 
-echo $dom->saveXML();
-$dom->save('markers.xml');// Save the file.
+$json = json_encode($datas);
+// Name and saves the file.
+$filename = "markers.json";
+file_put_contents($filename, $json);
