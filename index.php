@@ -42,10 +42,10 @@
 		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 		<!-- JS -->
 		<script src="js/ext_script/markerclusterer.js"></script>
-    	<script src="js/gmap.js"></script>
+    	<script src="js/gmap_oop.js"></script>
         <!-- Gmaps -->
 		<script async defer
-    	src="https://maps.googleapis.com/maps/api/js?key=API_KEY&callback=initMap">
+    	src="https://maps.googleapis.com/maps/api/js?key=API_KEY&callback=initApp">
    		</script>
     </body>
 </html>
