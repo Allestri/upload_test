@@ -150,7 +150,27 @@
                             if(!in_array($file_ext, $extensions)){
                                 $ext_error = true;
                             }
+                            
                             // Si l'erreur n'est pas egale à 0
+                            if($ext_error){
+                                echo 'Type de fichier invalide';
+                            } elseif ($_FILES['myfile']['error'] > 0){
+                                echo $phpFileUploadErrors[$_FILES['myfile']['error']];
+                            } else {
+                                echo $phpFileUploadErrors[$_FILES['myfile']['error']];
+                            }
+                            /*
+                            if($_FILES['myfile']['error'] > 0 || ($ext_error)){
+                                if($ext_error){
+                                    echo 'Le Type de fichier est invalide';
+                                } else {
+                                    echo $phpFileUploadErrors[$_FILES['myfile']['error']];
+                                }
+                            }
+                            */
+                            
+                            
+                            /*
                             if($_FILES['myfile']['error']){
                                 echo $phpFileUploadErrors[$_FILES['myfile']['error']];
                             } elseif ($ext_error){
@@ -161,7 +181,7 @@
                                 $tmp_name = $_FILES['myfile']['tmp_name'];
                                 $dir_folder = $_SERVER['DOCUMENT_ROOT'];
                             };
-                                
+                                */
 
                                 
                                 // Unique file ID
@@ -170,7 +190,7 @@
                                
                                 // Rename the file
                                 $name = "{$_POST['titre']}.{$file_ext}";
-                                var_dump($name);
+                                //var_dump($name);
                                 
                                 
                                 $coordinates = putExif($name);
