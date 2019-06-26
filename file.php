@@ -59,73 +59,82 @@
                 	  
                 	  function putExif($file){
                 	      
-                	      $exif = exif_read_data('images/' . $file, 0, true);
-                	      $GPSLatitudeRef = $exif['GPS']['GPSLatitudeRef'];
-                	      $GPSLongitudeRef = $exif['GPS']['GPSLongitudeRef'];
+                	      $exif = @exif_read_data('images/' . $file, 0, true);
                 	      
+                	      if(isset($exif['GPS'])){
                 	      
-                	      // get hemi multiplier
-                	      $latM = 1;
-                	      $longM = 1;
-                	      
-                	      //$flip = ($longitude == 'W' || $latitude == 'S') ? "-" : null;
-                	      if($GPSLatitudeRef == 'S'){
-                	          $latM = -1;
+                    	      $exifValides = true;
+                    	      $GPSLatitudeRef = $exif['GPS']['GPSLatitudeRef'];
+                    	      $GPSLongitudeRef = $exif['GPS']['GPSLongitudeRef'];
+                    	      
+                    	      
+                    	      // get hemi multiplier
+                    	      $latM = 1;
+                    	      $longM = 1;
+                    	      
+                    	      //$flip = ($longitude == 'W' || $latitude == 'S') ? "-" : null;
+                    	      if($GPSLatitudeRef == 'S'){
+                    	          $latM = -1;
+                    	      }
+                    	      if($GPSLongitudeRef == 'W'){
+                    	          $longM = -1;
+                    	      }
+                    	      
+                    	      
+                    	      $GPSLongDegrees = getCoords($exif['GPS']['GPSLongitude'][0]);
+                    	      $GPSLongMinutes = getCoords($exif['GPS']['GPSLongitude'][1]);
+                    	      $GPSLongSeconds = getCoords($exif['GPS']['GPSLongitude'][2]);
+                    	      
+                    	      $Longitude = $longM * ($GPSLongDegrees + $GPSLongMinutes / 60 + $GPSLongSeconds / 3600);
+                    	      //($GPSLongDegrees + $GPSLongMinutes / 60 + $GPSLongSeconds / 3600);
+                    	      
+                    	      $GPSLatDegrees = getCoords($exif['GPS']['GPSLatitude'][0]);
+                    	      $GPSLatMinutes = getCoords($exif['GPS']['GPSLatitude'][1]);
+                    	      $GPSLatSeconds = getCoords($exif['GPS']['GPSLatitude'][2]);
+                    	      
+                    	      $Latitude = $latM *($GPSLatDegrees + $GPSLatMinutes / 60 + $GPSLatSeconds / 3600);
+                    	      
+                    	      //var_dump($Latitude);
+                    	      //var_dump($Longitude);
+                    	      
+                    	      //var_dump($GPSLongDegrees);
+                    	      //var_dump($GPSLongMinutes);
+                    	      //var_dump($GPSLongSeconds);
+                    	      
+                    	      
+                    	      //var_dump($GPSLatitudeRef);
+                    	      //var_dump($GPSLongitudeRef);
+                    	      // Latitude
+                    	      $latitude['degrees'] = getCoords( $exif['GPS']['GPSLatitude'][0] );
+                    	      $latitude['minutes'] = getCoords( $exif['GPS']['GPSLatitude'][1] );
+                    	      $latitude['seconds'] = getCoords( $exif['GPS']['GPSLatitude'][2] );
+                    	      
+                    	      $latitude['minutes'] += 60 * ($latitude['degrees'] - floor($latitude['degrees']));
+                    	      $latitude['degrees'] = floor($latitude['degrees']);
+                    	      
+                    	      $latitude['seconds'] += 60 * ($latitude['minutes'] - floor($latitude['minutes']));
+                    	      $latitude['minutes'] = floor($latitude['minutes']);
+                    	      
+                    	      
+                    	      // Return coordinates
+                    	      $result['latitude'] = $Latitude;
+                    	      $result['longitude'] = $Longitude;
+                    	      
+                    	      var_dump($result);
+                    	      return $result;
+                	      } else {
+                	          echo 'Votre fichier ne contient pas de données EXIF';
                 	      }
-                	      if($GPSLongitudeRef == 'W'){
-                	          $longM = -1;
-                	      }
-                	      
-                	      
-                	      $GPSLongDegrees = getCoords($exif['GPS']['GPSLongitude'][0]);
-                	      $GPSLongMinutes = getCoords($exif['GPS']['GPSLongitude'][1]);
-                	      $GPSLongSeconds = getCoords($exif['GPS']['GPSLongitude'][2]);
-                	      
-                	      $Longitude = $longM * ($GPSLongDegrees + $GPSLongMinutes / 60 + $GPSLongSeconds / 3600);
-                	      //($GPSLongDegrees + $GPSLongMinutes / 60 + $GPSLongSeconds / 3600);
-                	      
-                	      $GPSLatDegrees = getCoords($exif['GPS']['GPSLatitude'][0]);
-                	      $GPSLatMinutes = getCoords($exif['GPS']['GPSLatitude'][1]);
-                	      $GPSLatSeconds = getCoords($exif['GPS']['GPSLatitude'][2]);
-                	      
-                	      $Latitude = $latM *($GPSLatDegrees + $GPSLatMinutes / 60 + $GPSLatSeconds / 3600);
-                	      
-                	      //var_dump($Latitude);
-                	      //var_dump($Longitude);
-                	      
-                	      //var_dump($GPSLongDegrees);
-                	      //var_dump($GPSLongMinutes);
-                	      //var_dump($GPSLongSeconds);
-                	      
-                	      
-                	      //var_dump($GPSLatitudeRef);
-                	      //var_dump($GPSLongitudeRef);
-                	      // Latitude
-                	      $latitude['degrees'] = getCoords( $exif['GPS']['GPSLatitude'][0] );
-                	      $latitude['minutes'] = getCoords( $exif['GPS']['GPSLatitude'][1] );
-                	      $latitude['seconds'] = getCoords( $exif['GPS']['GPSLatitude'][2] );
-                	      
-                	      $latitude['minutes'] += 60 * ($latitude['degrees'] - floor($latitude['degrees']));
-                	      $latitude['degrees'] = floor($latitude['degrees']);
-                	      
-                	      $latitude['seconds'] += 60 * ($latitude['minutes'] - floor($latitude['minutes']));
-                	      $latitude['minutes'] = floor($latitude['minutes']);
-                	      
-                	      
-                	      // Return coordinates
-                	      $result['latitude'] = $Latitude;
-                	      $result['longitude'] = $Longitude;
-                	      
-                	      var_dump($result);
-                	      return $result;
                 	  }
                 	  
+                	  // Présence d'exif ou non.
+                	  $exifValides = null;
                 	  // Placeholder adress insert SQL
                 	  $foo ="John Doe";
              	
                      if(isset($_FILES['myfile'])){
                             
-                            pre_r($_FILES);
+                            //pre_r($_FILES);
                             
                             
                             
@@ -157,17 +166,10 @@
                             } elseif ($_FILES['myfile']['error'] > 0){
                                 echo $phpFileUploadErrors[$_FILES['myfile']['error']];
                             } else {
+                                ?>
+                                <div class="alert alert-success"><?php
                                 echo $phpFileUploadErrors[$_FILES['myfile']['error']];
                             }
-                            /*
-                            if($_FILES['myfile']['error'] > 0 || ($ext_error)){
-                                if($ext_error){
-                                    echo 'Le Type de fichier est invalide';
-                                } else {
-                                    echo $phpFileUploadErrors[$_FILES['myfile']['error']];
-                                }
-                            }
-                            */
                             
                             
                             /*
@@ -182,6 +184,8 @@
                                 $dir_folder = $_SERVER['DOCUMENT_ROOT'];
                             };
                                 */
+                                $tmp_name = $_FILES['myfile']['tmp_name'];
+                                $dir_folder = $_SERVER['DOCUMENT_ROOT'];
 
                                 
                                 // Unique file ID
@@ -193,25 +197,25 @@
                                 //var_dump($name);
                                 
                                 
-                                $coordinates = putExif($name);
+                                
                                 
                                 // Check if a file already exists
                                 if(file_exists('images/'. $name)){
-                                    echo "Le fichier existe</br>";
+                                    echo "</br>Le fichier existe</br>";
                                     //renameFile($fid);
                                     $name = "{$_POST['titre']}_{$fid}.{$file_ext}";
                                     move_uploaded_file($tmp_name, 'images/'. $name);
                                     
+                                    // EXIF
+                                    $coordinates = putExif($name);
                                     
-                                   // Insert Datas from function 
-                                    
-
-                                    
-                                    //var_dump($exif);
-                                    insertDatas($foo, $coordinates['longitude'], $coordinates['latitude']);
+                                   // Insert Datas from function
+                                    if($exifValides){
+                                        insertDatas($foo, $coordinates['longitude'], $coordinates['latitude']);
+                                    }
                                     //echo "Latitude :" . $latitude['degrees'] . $latitude['minutes'] . $latitude['seconds'];
                                 } else {
-                                    echo "Le fichier n'existe pas</br>";
+                                    echo "</br>Le nom du fichier est disponible</br>";
                                     //var_dump($dir_folder);
                                     
                                     move_uploaded_file($tmp_name, 'images/'. $name);
@@ -219,8 +223,10 @@
                                     $coordinates = putExif($name);
                                     
                                     //var_dump($exif);
-                                    insertDatas($foo, $coordinates['longitude'], $coordinates['latitude']);
-                                    echo "Fichier uploadé avec succès !";
+                                    if($exifValides){
+                                        insertDatas($foo, $coordinates['longitude'], $coordinates['latitude']);
+                                    }
+                                    echo "</br>Fichier uploadé avec succès !";
                                 }                           
                                 
                                 ?>
