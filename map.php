@@ -33,10 +33,11 @@
             </div>
     </div>
     <!-- JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <script src="js/gmap.js"></script>
 	<!-- Gmaps -->
 	<script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCtbSOqG5eE8gT3Pwo7D1ClrJi3X97HAi0&callback=initMap">
+    src="https://maps.googleapis.com/maps/api/js?key=API_KEY&callback=initMap">
     </script>
 </body>
 </html>

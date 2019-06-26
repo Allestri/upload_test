@@ -42,7 +42,7 @@
             <div class="row justify-content-center">
                 <div class="col-lg-12">
                 	<?php
-                	
+                            	               	
                 	function insertDatas($expr, $lng, $lat){
                 	    $bdd = new PDO('mysql:host=localhost;dbname=upload_photos;charset=utf8','root', '', array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
                 	    //var_dump($bdd);
@@ -57,13 +57,25 @@
                 	      return $coords[0] / $coords[1];
                 	  }
                 	  
+                	  
+                	  // Présence d'exif ou non. 
+                	  function exifReady($file){
+                	      $exif = @exif_read_data('images/' . $file, 0, true);
+                	      $hasExif = null;
+                	      if(isset($exif['GPS'])){
+                	          $hasExif = true;
+                	      } else {
+                	          $hasExif = false;
+                	      }
+                	      return $hasExif;
+                	  }
+                	  
                 	  function putExif($file){
                 	      
                 	      $exif = @exif_read_data('images/' . $file, 0, true);
                 	      
                 	      if(isset($exif['GPS'])){
                 	      
-                    	      $exifValides = true;
                     	      $GPSLatitudeRef = $exif['GPS']['GPSLatitudeRef'];
                     	      $GPSLongitudeRef = $exif['GPS']['GPSLongitudeRef'];
                     	      
@@ -127,8 +139,8 @@
                 	      }
                 	  }
                 	  
-                	  // Présence d'exif ou non.
-                	  $exifValides = null;
+                	  // Présence d'exif ou non. ( DEPRECATED )
+                	  //$exifValides = null;
                 	  // Placeholder adress insert SQL
                 	  $foo ="John Doe";
              	
@@ -208,7 +220,8 @@
                                     
                                     // EXIF
                                     $coordinates = putExif($name);
-                                    
+                                    $exifValides = exifReady($name);
+                                    var_dump($exifValides);
                                    // Insert Datas from function
                                     if($exifValides){
                                         insertDatas($foo, $coordinates['longitude'], $coordinates['latitude']);
@@ -221,7 +234,8 @@
                                     move_uploaded_file($tmp_name, 'images/'. $name);
                                     //$exif = exif_read_data('images/' . $name);
                                     $coordinates = putExif($name);
-                                    
+                                    $exifValides = exifReady($name);
+                                    var_dump($exifValides);
                                     //var_dump($exif);
                                     if($exifValides){
                                         insertDatas($foo, $coordinates['longitude'], $coordinates['latitude']);
@@ -252,6 +266,22 @@
             	</div>
             </div>
     </div>
+    <div class="row justify-content-center">
+         <div class="col-lg-6">
+			<div id="map"></div>
+        </div>
+    </div>
+   	<div class="row justify-content-center">
+    	<div class="col-lg-6">
+    		<button id="refresh">Rafraichir</button>
+   	 	</div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="js/gmap.js"></script>
+    <!-- Gmaps -->
+	<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=API_KEY&callback=initMap">
+   	</script>
 </body>
 
 </html>
