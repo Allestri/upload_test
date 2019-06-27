@@ -51,3 +51,17 @@ function initMap() {
 	});
 };
 
+// Test Ajax
+function getDatas(){
+	$.ajax({
+		type: 'POST',
+		url: 'file.php',
+		success: function(){
+			alert('Ok!');
+		},
+		error : function(result, status, error){
+			alert('Erreur');
+		}
+	});
+};
+

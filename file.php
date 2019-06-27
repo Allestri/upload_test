@@ -23,7 +23,7 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-6">
-                <form method="post" action="file.php" enctype="multipart/form-data">
+                <form method="POST" action="file.php" enctype="multipart/form-data">
                 
                 	<div class="form-group">
                         <label for="titre">Titre du fichier (max. 50 caractères) :</label><br />
@@ -42,6 +42,8 @@
             <div class="row justify-content-center">
                 <div class="col-lg-12">
                 	<?php
+                	
+                	
                             	               	
                 	function insertDatas($expr, $lng, $lat){
                 	    $bdd = new PDO('mysql:host=localhost;dbname=upload_photos;charset=utf8','root', '', array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
@@ -249,7 +251,7 @@
                             }
                             
                             
-
+                        include "datas.php";
                         
                         function pre_r($array){
                             echo '<pre>';
@@ -274,6 +276,7 @@
    	<div class="row justify-content-center">
     	<div class="col-lg-6">
     		<button id="refresh">Rafraichir</button>
+    		<button id="getDatas">Upload</button>
    	 	</div>
     </div>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
