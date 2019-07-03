@@ -21,13 +21,33 @@ function displayMap()
 	        success: (data)=> {
 	            console.log(data[2].lat, data[2].lng);
 	            console.log(data.length);
+	            
+	            // Info window
+                var infoWindow = new google.maps.InfoWindow;
+                
 	            // Loop through each locations.
 	            for(var i = 0; i < data.length; i++){
+	            	
+	            	// Position
+	                var latlngset = new google.maps.LatLng(data[i].lat, data[i].lng);
+	            	
 	                marker = new google.maps.Marker({
-	                    position: new google.maps.LatLng(data[i].lat, data[i].lng),
-	                    map: gmap
+	                    position: latlngset,
+	                    map: gmap,
+	                    title: 'Click me ' + i
 	                });
 	                markers.push(marker);
+	                infoWindow.setContent("Bonjour");
+	                
+	                // Event listener
+	                marker.addListener('click', function() {
+	                	console.log('open');
+	                	console.log(infoWindow);
+	                	
+	                	
+	                	//infoWindow.setContent("Bonjour");
+	                	infoWindow.open(map, marker);
+	                });
 	            }
 	    		// Clusterer
 	    		var markerCluster = new MarkerClusterer(gmap, markers,{
