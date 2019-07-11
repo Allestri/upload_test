@@ -227,6 +227,8 @@
                                    // Insert Datas from function
                                     if($exifValides){
                                         insertDatas($foo, $coordinates['longitude'], $coordinates['latitude']);
+                                    } else {
+                                        echo 'Impossible de insérer des données exif';
                                     }
                                     //echo "Latitude :" . $latitude['degrees'] . $latitude['minutes'] . $latitude['seconds'];
                                 } else {
